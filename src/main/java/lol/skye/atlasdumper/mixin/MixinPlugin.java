@@ -23,11 +23,16 @@ public class MixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         AtlasDumper.LOGGER.info("Checking {}", mixinClassName);
+
+        // 19w34a-19w46b
+        boolean isSnapshot = VersionConstants.YEAR == 19 &&
+                (VersionConstants.WEEK >= 34 && VersionConstants.WEEK <= 46);
+
         if (mixinClassName.contains("compat.pre115")) {
-            return VersionConstants.MINOR < 15;
+            return isSnapshot || VersionConstants.MINOR < 15;
         } else if (mixinClassName.contains("compat.post115")) {
-            // anything 1.15 to 1.19, or 1.19-1.19.2
-            return VersionConstants.MINOR > 15 &&
+            // anything 1.15 (19w46b+) to 1.19, or 1.19-1.19.2
+            return !isSnapshot && VersionConstants.MINOR >= 15 &&
                     (VersionConstants.MINOR < 19 ||
                             (VersionConstants.MINOR == 19 && VersionConstants.PATCH < 3));
         } else if (mixinClassName.contains("compat.post1192")) {
