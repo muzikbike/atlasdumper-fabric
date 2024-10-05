@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "lol.skye.atlasdumper.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"plugin": "lol.skye.atlasdumper.mixin.MixinPlugin",
+	"mixins": [
+		"compat.post115.SpriteAtlasTextureMixin",
+		"compat.post1192.SpriteAtlasTextureMixin",
+		"compat.pre115.SpriteAtlasTextureMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
