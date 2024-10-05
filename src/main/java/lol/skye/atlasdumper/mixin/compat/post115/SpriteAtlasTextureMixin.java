@@ -3,6 +3,7 @@ package lol.skye.atlasdumper.mixin.compat.post115;
 import lol.skye.atlasdumper.data.SpriteAtlasData;
 import lol.skye.atlasdumper.util.ReflectionUtil;
 import lol.skye.atlasdumper.util.TextureDumper;
+import lol.skye.atlasdumper.util.VersionConstants;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Dynamic;
@@ -29,6 +30,11 @@ public class SpriteAtlasTextureMixin {
         SpriteAtlasData atlasData = ReflectionUtil.getData(data, true);
         if (atlasData == null) {
             return;
+        }
+
+        // 1.15-pre1 curse you
+        if (atlasData.maxLevel == -1 && VersionConstants.RC) {
+            atlasData.maxLevel = ReflectionUtil.getField(_this, "field_5281");
         }
 
         TextureDumper.dumpTexture(

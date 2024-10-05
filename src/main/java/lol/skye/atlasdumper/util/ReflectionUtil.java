@@ -17,6 +17,16 @@ public class ReflectionUtil {
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
     }
 
+    public static <T> T getField(Object object, String fieldName) {
+        try {
+            Field field = object.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return (T) field.get(object);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // if there is a better way to do this with the mixin library,
     // please let me know :pleading_face:
     public static SpriteAtlasData getData(Object data, boolean getMaxLevel) {
@@ -32,15 +42,19 @@ public class ReflectionUtil {
 
             width = widthField.getInt(data);
             height = heightField.getInt(data);
-
-            if (getMaxLevel) {
-                Field maxLevelField = dataClass.getDeclaredField("field_21795");
-                openField(maxLevelField);
-                maxLevel = maxLevelField.getInt(data);
-            }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             AtlasDumper.LOGGER.error("reflection failed", e);
             return null;
+        }
+
+        if (getMaxLevel) {
+            try {
+                Field maxLevelField = dataClass.getDeclaredField("field_21795");
+                openField(maxLevelField);
+                maxLevel = maxLevelField.getInt(data);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                // ignore, leave maxLevel set to -1
+            }
         }
 
         return new SpriteAtlasData(width, height, maxLevel);

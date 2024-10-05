@@ -10,6 +10,7 @@ import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider;
 public class VersionConstants {
     public static int MAJOR, MINOR, PATCH;
     public static int YEAR = -1, WEEK = -1;
+    public static boolean RC;
 
     public static void init() {
         MinecraftGameProvider mc = (MinecraftGameProvider)
@@ -29,6 +30,7 @@ public class VersionConstants {
 
         try {
             String versionString = mc.getNormalizedGameVersion();
+            RC = versionString.contains("-rc");
             if (versionString.contains("-alpha")) {
                 String[] parts = versionString.split("\\.");
                 YEAR = Integer.parseInt(parts[parts.length - 3]);
