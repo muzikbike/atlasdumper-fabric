@@ -12,9 +12,13 @@ public class ReflectionUtil {
             throws NoSuchFieldException, IllegalAccessException {
         field.setAccessible(true);
 
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        try {
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        } catch (NoSuchFieldException e) {
+            // ignore, final field
+        }
     }
 
     public static <T> T getField(Object object, String fieldName) {
@@ -61,26 +65,9 @@ public class ReflectionUtil {
     }
 
     public static SpriteAtlasData getRecordData(Object record) {
-        Class<?> recordClass = record.getClass();
-        int width, height, maxLevel;
-
-        try {
-            Field widthField = recordClass.getDeclaredField("comp_1040");
-            Field heightField = recordClass.getDeclaredField("comp_1041");
-            Field maxLevelField = recordClass.getDeclaredField("comp_1042");
-
-            widthField.setAccessible(true);
-            heightField.setAccessible(true);
-            maxLevelField.setAccessible(true);
-
-            width = widthField.getInt(record);
-            height = heightField.getInt(record);
-            maxLevel = maxLevelField.getInt(record);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            AtlasDumper.LOGGER.error("reflection failed", e);
-            return null;
-        }
-
+        int width = getField(record, "comp_1040");
+        int height = getField(record, "comp_1041");
+        int maxLevel = getField(record, "comp_1042");
         return new SpriteAtlasData(width, height, maxLevel);
     }
 }
