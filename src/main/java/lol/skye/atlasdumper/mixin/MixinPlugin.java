@@ -38,7 +38,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
         } else if (mixinClassName.contains("compat.post1192")) {
             // 1.19.3+
             return VersionConstants.MINOR > 19 ||
-                    (VersionConstants.MINOR == 19 && VersionConstants.PATCH > 3);
+                    (VersionConstants.MINOR == 19 && VersionConstants.PATCH >= 3);
         }
 
         return false;
